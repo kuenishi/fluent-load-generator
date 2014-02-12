@@ -1,5 +1,6 @@
 require 'fluent/loadgen/datagen.rb'
 require 'fluent/loadgen/loader.rb'
+require 'date'
 
 module Fluent
   module Loadgen
