@@ -26,6 +26,7 @@ module Fluent
         #      robj = Riak::RObject.new(bucket, key)
         records = g.gen
         records[:key] = key
+        records[:id] = i
         res = target.post records.to_json
         # p records.to_json
         #      robj.raw_data = records.to_json
