@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'fluent/loadgen.rb'
+
+Loadgen::main()
