@@ -2,4 +2,4 @@
 
 require 'fluent/loadgen.rb'
 
-Loadgen::main()
+Fluent::Loadgen::main()

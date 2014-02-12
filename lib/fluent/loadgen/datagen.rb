@@ -1,4 +1,4 @@
-require 'riak'
+#require 'riak'
 require 'json'
 
 s = <<EOS
@@ -16,72 +16,60 @@ s = <<EOS
 }
 EOS
 
-c = Riak::Client.new(:protocol => "pbc",
-                     :nodes => [{:host => "localhost",
+#c = Riak::Client.new(:protocol => "pbc",
+#                     :nodes => [{:host => "localhost",
 #                                 :pb_port => 8087
-                                 :pb_port => 10017
-                                }])
-bucket = c.bucket("fluentlog")
+#                                 :pb_port => 10017
+#                                }])
+#bucket = c.bucket("fluentlog")
 
-class Gen
-  def initialize
-    @r = Random.new
-    @methods = ['PUT',
-                'GET', 'GET', 'GET', 'GET', 'GET', 'GET',
-                'POST', 'HEAD', 'DELETE']
-    @codes = ['200', '204', '302', '403', '404', '501', '503', '502']
-    @tags = ['shibuya', 'asakusa', 'tochigi']
-  end
+module Fluent
+  module Loadgen
+    class ApacheLogGen
+      def initialize
+        @r = Random.new
+        @methods = ['PUT',
+                    'GET', 'GET', 'GET', 'GET', 'GET', 'GET',
+                    'POST', 'HEAD', 'DELETE']
+        @codes = ['200', '204', '302', '403', '404', '501', '503', '502']
+        @tags = ['shibuya', 'asakusa', 'tochigi']
+      end
 
-  def host
-    "#{@r.rand(256)}.#{@r.rand(256)}.#{@r.rand(256)}.#{@r.rand(256)}"
-  end
-  def method
-    @methods[@r.rand(@methods.length)]
-  end
-  def path 
-    "/buckets/moriyoshi/object/riaklogo.png"
-  end
-  def code
-    @codes[@r.rand(@codes.length)]
-  end
-  def size
-    @r.rand(1024).to_s
-  end
-  def time
-    Date.today.to_s
-  end
-  def tag
-  end
-  def gen
-    {
-      :host => host,
-      :user => "-",
-      :method => method,
-      :path => path,
-      :code => code,
-      :size => size,
-      :referer => "",
-      :agent => "",
-      :time => time,
-      :tag => tag
-    }
+      def host
+        "#{@r.rand(256)}.#{@r.rand(256)}.#{@r.rand(256)}.#{@r.rand(256)}"
+      end
+      def method
+        @methods[@r.rand(@methods.length)]
+      end
+      def path
+        "/buckets/moriyoshi/object/riaklogo.png"
+      end
+      def code
+        @codes[@r.rand(@codes.length)]
+      end
+      def size
+        @r.rand(1024).to_s
+      end
+      def time
+        Date.today.to_s
+      end
+      def tag
+      end
+      def gen
+        {
+          :host => host,
+          :user => "-",
+          :method => method,
+          :path => path,
+          :code => code,
+          :size => size,
+          :referer => "",
+          :agent => "",
+          :time => time,
+          :tag => tag
+        }
+      end
+    end
   end
 end
 
-g = Gen.new
-
-n = ARGV.shift.to_i
-(0..n).each do |i|
-  today = Date.today
-  key = "#{today.to_s}-#{i}"
-  robj = Riak::RObject.new(bucket, key)
-  records = g.gen
-  robj.raw_data = records.to_json
-  robj.indexes['year_int'] << today.year
-  robj.indexes['month_bin'] << "#{today.year}-#{today.month}"
-  robj.indexes['tag_bin'] << records[:tag]
-
-  robj.content_type = 'application/json'
-  robj.store
-end
