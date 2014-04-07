@@ -1,6 +1,8 @@
 fluent-load-generator
 =====================
 
+use [dummer](https://github.com/sonots/dummer) instead of this.
+
 ```
 $ bundle install
 $ bundle exec bin/flg http://localhost:8888/debug.test 100
