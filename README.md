@@ -1,7 +1,7 @@
 fluent-load-generator
 =====================
 
-use [dummer](https://github.com/sonots/dummer) instead of this.
+use [dummer](https://github.com/sonots/dummer) or [dummydata-producer](https://github.com/tagomoris/fluent-plugin-dummydata-producer) instead of this.
 
 ```
 $ bundle install
